@@ -18,7 +18,9 @@ import (
 	"gopkg.in/src-d/go-git.v4/plumbing"
 )
 
-func DescribePath(path string, commitish string) (*semverdesc.DescribeResults, error) {
+type Options gitgo.DescribeOptions
+
+func DescribePath(path string, commitish string, opts Options) (*semverdesc.DescribeResults, error) {
 	repo, err := git.PlainOpen(path)
 	if err != nil {
 		return nil, err
@@ -28,16 +30,12 @@ func DescribePath(path string, commitish string) (*semverdesc.DescribeResults, e
 	if err != nil {
 		return nil, err
 	}
-	return describe(repo, ref)
+	return describe(repo, ref, opts)
 }
 
-func describe(repo *git.Repository, ref *plumbing.Reference) (*semverdesc.DescribeResults, error) {
-	opts := gitgo.DescribeOptions{
-		Debug:      false,
-		Tags:       true,
-		Candidates: 0,
-	}
-	dr, err := gitgo.Describe(repo, ref, &opts)
+func describe(repo *git.Repository, ref *plumbing.Reference, opts Options) (*semverdesc.DescribeResults, error) {
+	ggOpts := gitgo.DescribeOptions(opts)
+	dr, err := gitgo.Describe(repo, ref, &ggOpts)
 	if err != nil {
 		return nil, err
 	}
