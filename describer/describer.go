@@ -15,29 +15,29 @@ import (
 	"github.com/mroth/semverdesc"
 	"github.com/mroth/semverdesc/gitgo"
 	"gopkg.in/src-d/go-git.v4"
+	"gopkg.in/src-d/go-git.v4/plumbing"
 )
 
-// TODO: describes HEAD, does not yet take a COMMITISH
-func DescribePath(path string) (*semverdesc.DescribeResults, error) {
+func DescribePath(path string, commitish string) (*semverdesc.DescribeResults, error) {
 	repo, err := git.PlainOpen(path)
 	if err != nil {
 		return nil, err
 	}
-	return describeRepo(repo)
-}
 
-func describeRepo(repo *git.Repository) (*semverdesc.DescribeResults, error) {
-	head, err := repo.Head()
+	ref, err := repo.Reference(plumbing.ReferenceName(commitish), true)
 	if err != nil {
 		return nil, err
 	}
+	return describe(repo, ref)
+}
 
+func describe(repo *git.Repository, ref *plumbing.Reference) (*semverdesc.DescribeResults, error) {
 	opts := gitgo.DescribeOptions{
 		Debug:      false,
 		Tags:       true,
 		Candidates: 0,
 	}
-	dr, err := gitgo.Describe(repo, head, &opts)
+	dr, err := gitgo.Describe(repo, ref, &opts)
 	if err != nil {
 		return nil, err
 	}

@@ -26,7 +26,7 @@ var (
 func main() {
 	flag.Parse()
 	// TODO: os.args is commitish, not path
-	d, err := describer.DescribePath(*path)
+	d, err := describer.DescribePath(*path, "HEAD")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "fatal: %v.\n", err)
 		os.Exit(128) //??
