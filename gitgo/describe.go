@@ -207,6 +207,25 @@ func Describe(r *git.Repository, ref *plumbing.Reference, opts *DescribeOptions)
 		fmt.Fprintf(os.Stderr, "gave up search at %v\n", lastCommit.Hash.String())
 	}
 
+	// TODO(mroth): rationalize this error with above candidate search.
+	// Currently this code appears to find N candidates, but only uses the first
+	// one no matter what. So now we just check if at least one candidate exists
+	// to bail gracefully instead of panicking on mis-slice.
+	//
+	// However, why is the candidate results built up to begin with? Assuming it has
+	// to deal with unimplemented search features, so keeping for now in case I want
+	// to add those features, need to check C git source code and see what it does.
+	if len(candidates) < 1 {
+		return nil, fmt.Errorf("no tags can describe %v", ref.Hash())
+	}
+	// Error git describe sometimes returns in this case:
+	//
+	// 		fatal: No annotated tags can describe 'd71dd5072d51458a534ca7e0ec7c181d84754774'.
+	// 		However, there were unannotated tags: try --tags.
+	//
+	// To support that, looks like this core logic would have to be modified to track unaccepted
+	// candidates as well.
+
 	return &DescribeResults{
 		ref,
 		candidates[0].ref,
