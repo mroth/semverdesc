@@ -24,15 +24,15 @@ import (
 // DescribeResults are Describe as defined in PR#816 but with formatting related
 // results removed, as output formatting can (and should?) be handled separately
 // from the Describe results themselves.
+//
+// Also some additional changes now related to API changes we are making here.
 type DescribeResults struct {
-	// Reference being described
-	Reference *plumbing.Reference
+	// Hash of the commit-ish being described
+	Hash plumbing.Hash
 	// Tag of the describe object
 	Tag *plumbing.Reference
 	// Distance to the tag object in commits
 	Distance int
-	// Dirty string to append
-	// Dirty string
 	// Dirty bool
 }
 
@@ -109,9 +109,22 @@ func (o *DescribeOptions) Validate() error {
 // Describe is the `git describe` as WIP in the potentially abandoned PR#816.
 //
 // Few minor modifications:
-//  - Catch some additional error conditions instead of panicking.
-//  - Deal with some things as uint instead of int to avoid invalid negative values
-func Describe(r *git.Repository, ref *plumbing.Reference, opts *DescribeOptions) (*DescribeResults, error) {
+//
+//  * Catch some additional error conditions instead of panicking.
+//  * Deal with some things as uint instead of int to avoid invalid negative values
+//  * Since git describe needs to be able to operate on a commit-ish, we take a
+//    plumbing.Hash directly rather than a .Reference, so that a user can start
+//    with a Revision as well as a ref (closest to commit-ish).
+//
+// TODO: model after rust libgit2 bindings, 2nd version that is a method
+// receiver on a commit object.  But that cant work here since we need to be
+// able to get the repo?
+//
+// TODO: is Repository actually used here at all?? maybe just in cases where
+// HEAD is looked up... no actually it is, to iterate the commits. Hmm.
+//
+// TODO: maybe allow nil hash, in which case automatically get HEAD.
+func Describe(r *git.Repository, hash *plumbing.Hash, opts *DescribeOptions) (*DescribeResults, error) {
 	if err := opts.Validate(); err != nil {
 		return nil, err
 	}
@@ -119,7 +132,7 @@ func Describe(r *git.Repository, ref *plumbing.Reference, opts *DescribeOptions)
 	// Describes through the commit log ordered by commit time seems to be the best approximation to
 	// git describe.
 	commitIterator, err := r.Log(&git.LogOptions{
-		From:  ref.Hash(),
+		From:  *hash,
 		Order: git.LogOrderCommitterTime,
 	})
 	if err != nil {
@@ -157,7 +170,9 @@ func Describe(r *git.Repository, ref *plumbing.Reference, opts *DescribeOptions)
 	var lastCommit *object.Commit
 
 	if opts.Debug {
-		fmt.Fprintf(os.Stderr, "searching to describe %v\n", ref.Name())
+		// fmt.Fprintf(os.Stderr, "searching to describe %v\n", ref.Name())
+		fmt.Fprintf(os.Stderr, "searching to describe")
+		// original git: "No exact match on refs or tags, searching to describe"
 	}
 
 	for {
@@ -216,7 +231,7 @@ func Describe(r *git.Repository, ref *plumbing.Reference, opts *DescribeOptions)
 	// to deal with unimplemented search features, so keeping for now in case I want
 	// to add those features, need to check C git source code and see what it does.
 	if len(candidates) < 1 {
-		return nil, fmt.Errorf("no tags can describe %v", ref.Hash())
+		return nil, fmt.Errorf("no tags can describe %v", hash)
 	}
 	// Error git describe sometimes returns in this case:
 	//
@@ -227,7 +242,7 @@ func Describe(r *git.Repository, ref *plumbing.Reference, opts *DescribeOptions)
 	// candidates as well.
 
 	return &DescribeResults{
-		ref,
+		*hash,
 		candidates[0].ref,
 		candidates[0].distance,
 	}, nil

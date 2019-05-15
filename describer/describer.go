@@ -20,22 +20,22 @@ import (
 
 type Options gitgo.DescribeOptions
 
-func DescribePath(path string, commitish string, opts Options) (*semverdesc.DescribeResults, error) {
+func DescribeAtPath(path string, commitish string, opts Options) (*semverdesc.DescribeResults, error) {
 	repo, err := git.PlainOpen(path)
 	if err != nil {
 		return nil, err
 	}
 
-	ref, err := repo.Reference(plumbing.ReferenceName(commitish), true)
+	hash, err := repo.ResolveRevision(plumbing.Revision(commitish))
 	if err != nil {
 		return nil, err
 	}
-	return describe(repo, ref, opts)
+	return describe(repo, hash, opts)
 }
 
-func describe(repo *git.Repository, ref *plumbing.Reference, opts Options) (*semverdesc.DescribeResults, error) {
+func describe(repo *git.Repository, hash *plumbing.Hash, opts Options) (*semverdesc.DescribeResults, error) {
 	ggOpts := gitgo.DescribeOptions(opts)
-	dr, err := gitgo.Describe(repo, ref, &ggOpts)
+	dr, err := gitgo.Describe(repo, hash, &ggOpts)
 	if err != nil {
 		return nil, err
 	}
@@ -47,6 +47,6 @@ func convert(dr *gitgo.DescribeResults) semverdesc.DescribeResults {
 	return semverdesc.DescribeResults{
 		TagName: dr.Tag.Name().Short(),
 		Ahead:   uint(dr.Distance),
-		HashStr: dr.Reference.Hash().String(),
+		HashStr: dr.Hash.String(),
 	}
 }

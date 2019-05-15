@@ -47,7 +47,7 @@ func main() {
 	if commitish == "" {
 		commitish = "HEAD"
 	}
-	d, err := describer.DescribePath(*path, commitish, opts)
+	d, err := describer.DescribeAtPath(*path, commitish, opts)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "fatal: %v.\n", err)
 		os.Exit(128) //??
