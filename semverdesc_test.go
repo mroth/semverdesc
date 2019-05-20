@@ -97,3 +97,11 @@ func TestDescribeResults_FormatLegacy(t *testing.T) {
 	}
 }
 
+func BenchmarkFormat(b *testing.B) {
+	d := testCases[0].desc
+	opts := DefaultFormatOptions()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		d.Format(opts)
+	}
+}
