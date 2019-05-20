@@ -1,8 +1,12 @@
-// Package semverdesc defines a standard format for... TODO
+// Package semverdesc defines a standardized method for formatting `git
+// describe` results that is compliant with Semantic Versioning 2.0.
+// (https://semver.org)
 package semverdesc
 
 import "fmt"
 
+// DescribeResults are the structured results  from a `git describe` operation
+// on a commit, ready to be formatted.
 type DescribeResults struct {
 	// The name of the matched tag
 	TagName string
@@ -13,17 +17,24 @@ type DescribeResults struct {
 	HashStr string
 }
 
+// FormatOptions control the output when formatting a DescribeResults.
+//
+// Note that `0` is a valid value for certain options, and has semantic
+// meaning within git describe that differs greatly from what would be expected
+// in a zero value. Thus, if you are not explicitly defining all struct values,
+// you will likely want to start with DefaultFormatOptions().
 type FormatOptions struct {
 	// Instead of using the default 7 hexadecimal digits as the abbreviated
-	// object name, use <n> digits, or as many digits as needed to form a unique
-	// object name. An <n> of 0 will suppress long format, only showing the
-	// closest tag.
+	// object name, use <n> digits. An <n> of 0 will suppress long format, only
+	// showing the closest tag.
 	//
-	// Re: "or as many digits as needed to form a unique object name." this is not
-	// currently implemented probably impossible.
+	// Whereas official git describe has a "...or as many digits as needed to
+	// form a unique object name." caveat, this is not currently implemented
+	// here.
 	Abbrev uint
-	Long   bool
-	// DirtyMark
+	// Always use long format, even if exact match.
+	Long bool
+	// TODO: DirtyMark
 }
 
 // DefaultFormatOptions returns the default FormatOptions.
