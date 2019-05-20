@@ -3,20 +3,15 @@ package semverdesc
 import "testing"
 
 func TestDescribeResults_Format(t *testing.T) {
-	type fields struct {
-		TagName string
-		Ahead   uint
-		HashStr string
-	}
 	tests := []struct {
-		name   string
-		fields fields
-		opts   FormatOptions
-		want   string
+		name string
+		desc DescribeResults
+		opts FormatOptions
+		want string
 	}{
 		{
 			name: "default",
-			fields: fields{
+			desc: DescribeResults{
 				TagName: "v0.2.1",
 				Ahead:   15,
 				HashStr: "d71dd5072d51458a534ca7e0ec7c181d84754774",
@@ -26,7 +21,7 @@ func TestDescribeResults_Format(t *testing.T) {
 		},
 		{
 			name: "adjust abbrev",
-			fields: fields{
+			desc: DescribeResults{
 				TagName: "v0.2.1",
 				Ahead:   15,
 				HashStr: "d71dd5072d51458a534ca7e0ec7c181d84754774",
@@ -43,7 +38,7 @@ func TestDescribeResults_Format(t *testing.T) {
 		// slice out of bounds.
 		{
 			name: "adjust abbrev overflow",
-			fields: fields{
+			desc: DescribeResults{
 				TagName: "v0.2.1",
 				Ahead:   15,
 				HashStr: "d71dd5",
@@ -55,7 +50,7 @@ func TestDescribeResults_Format(t *testing.T) {
 		},
 		{
 			name: "exact match",
-			fields: fields{
+			desc: DescribeResults{
 				TagName: "v0.1.2",
 				Ahead:   0,
 				HashStr: "71dd5072d51458a534ca7e0ec7c181d84754774d",
@@ -65,7 +60,7 @@ func TestDescribeResults_Format(t *testing.T) {
 		},
 		{
 			name: "exact match with long",
-			fields: fields{
+			desc: DescribeResults{
 				TagName: "v0.1.2",
 				Ahead:   0,
 				HashStr: "71dd5072d51458a534ca7e0ec7c181d84754774d",
@@ -76,15 +71,10 @@ func TestDescribeResults_Format(t *testing.T) {
 			want: "v0.1.2+0.g71dd507",
 		},
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			dr := &DescribeResults{
-				TagName: tt.fields.TagName,
-				Ahead:   tt.fields.Ahead,
-				HashStr: tt.fields.HashStr,
-			}
-			if got := dr.Format(tt.opts); got != tt.want {
-				t.Errorf("got %v, want %v", got, tt.want)
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := tc.desc.Format(tc.opts); got != tc.want {
+				t.Errorf("got %v, want %v", got, tc.want)
 			}
 		})
 	}
