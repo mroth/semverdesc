@@ -1,29 +1,30 @@
-// Wrapper for `git describe` that adds --semver
+// Wrapper for `git describe` that adds semverdesc output as the default.
 package main
 
 import (
-	"flag"
+	"errors"
 	"fmt"
 	"os"
 
 	"github.com/mroth/semverdesc"
 	"github.com/mroth/semverdesc/describer"
+	"github.com/spf13/pflag"
 )
 
 var (
 	// flags unique to us...
 	// ...main
-	path   = flag.String("path", ".", "path of git repo to describe, otherwise current workdir")
-	legacy = flag.Bool("legacy", false, "display results similar to 'git describe --tags', e.g. not semver compliant")
+	path   = pflag.String("path", "", "path of git repo to describe (default $PWD)")
+	legacy = pflag.Bool("legacy", false, "format results like normal git describe")
 
 	// flags compatible with git-describe...
 	// ...search
-	tags       = flag.Bool("tags", false, "use any tag, even unannotated")
-	candidates = flag.Uint("candidates", 10, "consider `<n>` most recent tags")
-	debug      = flag.Bool("debug", false, "debug search strategy on stderr")
+	tags       = pflag.Bool("tags", false, "use any tag, even unannotated")
+	candidates = pflag.Uint("candidates", 10, "consider `<n>` most recent tags")
+	debug      = pflag.Bool("debug", false, "debug search strategy on stderr")
 	// ...formatting
-	abbrev = flag.Uint("abbrev", 7, "use `<n>` digits to display SHA-1s")
-	long   = flag.Bool("long", false, "always use long format")
+	abbrev = pflag.Uint("abbrev", 7, "use `<n>` digits to display SHA-1s")
+	long   = pflag.Bool("long", false, "always use long format")
 
 	// Some potential additions to implement down the line if there is strong demand:
 	// --match <pattern>     only consider tags matching <pattern>
@@ -32,7 +33,14 @@ var (
 )
 
 func main() {
-	flag.Parse()
+	pflag.ErrHelp = errors.New("")
+	pflag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "usage: git semver-describe [<options>] [<commit-ish>]\n\n")
+		// fmt.Fprintf(os.Stderr, "   or: git semver-describe [<options>] --dirty\n\n") TODO: not yet implemented!
+		pflag.PrintDefaults()
+	}
+	pflag.Parse()
+
 	opts := describer.Options{
 		Debug:      *debug,
 		Tags:       *tags,
@@ -43,7 +51,7 @@ func main() {
 		Long:   *long,
 	}
 
-	commitish := flag.Arg(0)
+	commitish := pflag.Arg(0)
 	if commitish == "" {
 		commitish = "HEAD"
 	}
@@ -59,9 +67,3 @@ func main() {
 		fmt.Println(d.Format(formatOpts))
 	}
 }
-
-// do a full comparison along with shelling out to git describe to compare its output
-// func debugCompare() {
-// 	localOpts := localgit.NewDescribeOptions().Set(func(opts *localgit.DescribeOptions) {
-// 	})
-// }

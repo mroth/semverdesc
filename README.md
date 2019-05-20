@@ -1,6 +1,7 @@
-# git-describe-semver :dart:
+# git-semver-describe :dart:
 
-Extends `git describe` to return [Semantic Versioning v2.0](https://semver.org) compatible strings:
+Extends `git describe` to return [Semantic Versioning v2.0](https://semver.org)
+compatible strings:
 
 
 ```shell
@@ -16,14 +17,23 @@ v0.2.1-15-gd71dd50
 
 ## Usage
 
-For the most part, this is a drop-in replacement for `git describe`. The
-official git-describe has many many options, not all of which are supported
-here, but the goal is to cover the subset of options that are potentially useful
-when using git tags for semantic versioning.
+For the most part, this is a drop-in replacement for `git describe`, with nearly
+identical option syntax. The official git-describe has [tons of
+options](https://git-scm.com/docs/git-describe), some of which are not supported
+here, but the goal is to eventually cover the entire subset of options that are
+potentially useful when using git tags for semantic versioning.
 
 ```shell
 $ git semver-describe --help
-TODO: output here
+usage: git semver-describe [<options>] [<commit-ish>]
+
+      --abbrev <n>       use <n> digits to display SHA-1s (default 7)
+      --candidates <n>   consider <n> most recent tags (default 10)
+      --debug            debug search strategy on stderr
+      --legacy           format results like normal git describe
+      --long             always use long format
+      --path string      path of git repo to describe (default $PWD)
+      --tags             use any tag, even unannotated
 ```
 
 ## Installation
