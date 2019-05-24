@@ -30,6 +30,7 @@ type DescribeResults struct {
 	// Hash of the commit-ish being described
 	Hash plumbing.Hash
 	// Tag of the describe object
+	// TODO: this should probably be Ref given --all option?
 	Tag *plumbing.Reference
 	// Distance to the tag object in commits
 	Distance int
@@ -124,9 +125,40 @@ func (o *DescribeOptions) Validate() error {
 // HEAD is looked up... no actually it is, to iterate the commits. Hmm.
 //
 // TODO: maybe allow nil hash, in which case automatically get HEAD.
-func Describe(r *git.Repository, hash *plumbing.Hash, opts *DescribeOptions) (*DescribeResults, error) {
+func DescribeCommit(r *git.Repository, hash *plumbing.Hash, opts *DescribeOptions) (*DescribeResults, error) {
 	if err := opts.Validate(); err != nil {
 		return nil, err
+	}
+
+	// To query tags we create a temporary map
+	tags, err := makeTagMap(r)
+	if err != nil {
+		return nil, err
+	}
+	if len(tags) < 1 {
+		return nil, errors.New("no names found, cannot describe anything")
+	}
+
+	// TODO: will need to do dirty check early here
+
+	// first, check if the target commit is an exact tag match
+	if ref, ok := tags[*hash]; ok {
+		return &DescribeResults{
+			Hash:     *hash,
+			Tag:      ref,
+			Distance: 0,
+			// Dirty TODO
+		}, nil
+	}
+
+	// We didn't find an exact match above. If the maximum number of candidates
+	// requested was zero, then die early. Otherwise, indicate that we're going
+	// to begin a search.
+	if opts.Candidates == 0 {
+		return nil, fmt.Errorf("no tag exactly matches %v", hash.String())
+	}
+	if opts.Debug {
+		fmt.Fprintf(os.Stderr, "No exact match on refs or tags, searching to describe\n")
 	}
 
 	// Describes through the commit log ordered by commit time seems to be the best approximation to
@@ -139,25 +171,6 @@ func Describe(r *git.Repository, hash *plumbing.Hash, opts *DescribeOptions) (*D
 		return nil, err
 	}
 
-	// To query tags we create a temporary map.
-	tagIterator, err := r.Tags()
-	if err != nil {
-		return nil, err
-	}
-	tags := make(map[plumbing.Hash]*plumbing.Reference)
-	tagIterator.ForEach(func(t *plumbing.Reference) error {
-		if to, err := r.TagObject(t.Hash()); err == nil {
-			tags[to.Target] = t
-		} else {
-			tags[t.Hash()] = t
-		}
-		return nil
-	})
-	tagIterator.Close()
-	if len(tags) < 1 {
-		return nil, errors.New("no names found, cannot describe anything")
-	}
-
 	// The search looks for a number of suitable candidates in the log (specified through the options)
 	type describeCandidate struct {
 		ref       *plumbing.Reference
@@ -166,14 +179,8 @@ func Describe(r *git.Repository, hash *plumbing.Hash, opts *DescribeOptions) (*D
 	}
 	var candidates []*describeCandidate
 	var candidatesFound uint
-	var count = -1
+	var count = -1 // @@@ tracking distance
 	var lastCommit *object.Commit
-
-	if opts.Debug {
-		// fmt.Fprintf(os.Stderr, "searching to describe %v\n", ref.Name())
-		fmt.Fprintf(os.Stderr, "searching to describe")
-		// original git: "No exact match on refs or tags, searching to describe"
-	}
 
 	for {
 		var candidate = &describeCandidate{annotated: false}
@@ -246,4 +253,24 @@ func Describe(r *git.Repository, hash *plumbing.Hash, opts *DescribeOptions) (*D
 		candidates[0].ref,
 		candidates[0].distance,
 	}, nil
+}
+
+// func DescribeBlob
+
+func makeTagMap(r *git.Repository) (map[plumbing.Hash]*plumbing.Reference, error) {
+	tagIterator, err := r.Tags()
+	if err != nil {
+		return nil, err
+	}
+	tags := make(map[plumbing.Hash]*plumbing.Reference)
+	tagIterator.ForEach(func(t *plumbing.Reference) error {
+		if to, err := r.TagObject(t.Hash()); err == nil {
+			tags[to.Target] = t
+		} else {
+			tags[t.Hash()] = t
+		}
+		return nil
+	})
+	tagIterator.Close()
+	return tags, nil
 }
