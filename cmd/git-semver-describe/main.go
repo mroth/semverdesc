@@ -4,7 +4,9 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
+	"os/exec"
 
 	"github.com/mroth/semverdesc"
 	"github.com/mroth/semverdesc/describer"
@@ -21,7 +23,7 @@ var (
 	// ...search
 	tags       = pflag.Bool("tags", false, "use any tag, even unannotated")
 	candidates = pflag.Uint("candidates", 10, "consider `<n>` most recent tags")
-	debug      = pflag.Bool("debug", false, "debug search strategy on stderr")
+	// debug      = pflag.Bool("debug", false, "debug search strategy on stderr")
 	// ...formatting
 	abbrev = pflag.Uint("abbrev", 7, "use `<n>` digits to display SHA-1s")
 	long   = pflag.Bool("long", false, "always use long format")
@@ -42,7 +44,7 @@ func main() {
 	pflag.Parse()
 
 	opts := describer.Options{
-		Debug:      *debug,
+		// Debug:      *debug,
 		Tags:       *tags,
 		Candidates: *candidates,
 	}
@@ -52,13 +54,19 @@ func main() {
 	}
 
 	commitish := pflag.Arg(0)
-	if commitish == "" {
-		commitish = "HEAD"
-	}
-	d, err := describer.DescribeAtPath(*path, commitish, opts)
+	// if commitish == "" {
+	// 	commitish = "HEAD"
+	// }
+	d, err := describer.Describe(*path, commitish, opts)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "fatal: %v.\n", err)
-		os.Exit(128) //??
+		// if was underlying git describe error, pass it along exactly
+		if exiterr, ok := err.(*exec.ExitError); ok {
+			fmt.Fprint(os.Stderr, string(exiterr.Stderr))
+			os.Exit(exiterr.ExitCode())
+		}
+		// otherwise, handle as an error
+		log.Fatal(err)
+		os.Exit(1)
 	}
 
 	if *legacy {
