@@ -21,8 +21,10 @@ var (
 
 	// flags compatible with git-describe...
 	// ...search
+	all        = pflag.Bool("all", false, "use any ref")
 	tags       = pflag.Bool("tags", false, "use any tag, even unannotated")
 	candidates = pflag.Uint("candidates", 10, "consider `<n>` most recent tags")
+	exactMatch = pflag.Bool("exact-match", false, "only output exact matches")
 	match      = pflag.String("match", "", "only consider tags matching `<pattern>`")
 	exclude    = pflag.String("exclude", "", "do not consider tags matching `<pattern>`")
 	// debug      = pflag.Bool("debug", false, "debug search strategy on stderr")
@@ -48,8 +50,8 @@ func main() {
 		Candidates:     *candidates,
 		MatchPattern:   *match,
 		ExcludePattern: *exclude,
-		// All:            false,
-		// ExactMatch:     false,
+		All:            *all,
+		ExactMatch:     *exactMatch,
 	}
 	formatOpts := semverdesc.FormatOptions{
 		Abbrev:    *abbrev,
