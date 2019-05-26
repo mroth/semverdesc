@@ -14,28 +14,30 @@ import (
 )
 
 var (
-	// flags unique to us...
-	// ...main
-	path   = pflag.String("path", "", "path of git repo to describe (default $PWD)")
-	legacy = pflag.Bool("legacy", false, "format results like normal git describe")
-
 	// flags compatible with git-describe...
-	// ...search
-	all        = pflag.Bool("all", false, "use any ref")
-	tags       = pflag.Bool("tags", false, "use any tag, even unannotated")
-	candidates = pflag.Uint("candidates", 10, "consider `<n>` most recent tags")
+	// WONTFIX: --contains
+	// TODO: maybe --debug?
+	all  = pflag.Bool("all", false, "use any ref")
+	tags = pflag.Bool("tags", false, "use any tag, even unannotated")
+	long = pflag.Bool("long", false, "always use long format")
+	// TODO: maybe --first-parent?
+	abbrev     = pflag.Uint("abbrev", 7, "use `<n>` digits to display SHA-1s")
 	exactMatch = pflag.Bool("exact-match", false, "only output exact matches")
+	candidates = pflag.Uint("candidates", 10, "consider `<n>` most recent tags")
 	match      = pflag.String("match", "", "only consider tags matching `<pattern>`")
 	exclude    = pflag.String("exclude", "", "do not consider tags matching `<pattern>`")
-	// debug      = pflag.Bool("debug", false, "debug search strategy on stderr")
-	// ...formatting
-	abbrev = pflag.Uint("abbrev", 7, "use `<n>` digits to display SHA-1s")
-	long   = pflag.Bool("long", false, "always use long format")
-	dirty  = pflag.String("dirty", "", "append `<mark>` on dirty working tree")
+	// TODO: maybe --always?
+	dirty = pflag.String("dirty", "", "append `<mark>` on dirty working tree")
+	// TODO: maybe --broken?
+
+	// flags unique to us...
+	path   = pflag.String("path", "", "path of git repo to describe (default $PWD)")
+	legacy = pflag.Bool("legacy", false, "format results like normal git describe")
 )
 
 func main() {
 	pflag.ErrHelp = errors.New("")
+	pflag.CommandLine.SortFlags = false
 	// https://github.com/spf13/pflag#setting-no-option-default-values-for-flags
 	pflag.Lookup("dirty").NoOptDefVal = "-dirty"
 	pflag.Usage = func() {
