@@ -1,10 +1,9 @@
-# git-semver-describe :dart:
+# git semver-describe :dart:
 
 Extends `git describe` to return [Semantic Versioning v2.0](https://semver.org)
-compatible strings:
+compatible names by default:
 
-
-```shell
+```
 $ git describe --tags
 v0.2.1-15-gd71dd50
 
@@ -19,22 +18,30 @@ v0.2.1-15-gd71dd50
 
 For the most part, this is a drop-in replacement for `git describe`, with nearly
 identical option syntax. The official git-describe has [tons of
-options](https://git-scm.com/docs/git-describe), some of which are not supported
-here, but the goal is to eventually cover the entire subset of options that are
-potentially useful when using git tags for semantic versioning.
+options](https://git-scm.com/docs/git-describe), a few of which are not
+supported here, but I believe we have covered the entire subset of options that
+are probably useful when using git tags for semantic versioning.
 
-```shell
+```
 $ git semver-describe --help
 usage: git semver-describe [<options>] [<commit-ish>]
+   or: git semver-describe [<options>] --dirty
 
-      --abbrev <n>       use <n> digits to display SHA-1s (default 7)
-      --candidates <n>   consider <n> most recent tags (default 10)
-      --debug            debug search strategy on stderr
-      --legacy           format results like normal git describe
-      --long             always use long format
-      --path string      path of git repo to describe (default $PWD)
-      --tags             use any tag, even unannotated
+      --all                       use any ref
+      --tags                      use any tag, even unannotated
+      --long                      always use long format
+      --first-parent              only follow first parent
+      --abbrev <n>                use <n> digits to display SHA-1s (default 7)
+      --exact-match               only output exact matches
+      --candidates <n>            consider <n> most recent tags (default 10)
+      --match <pattern>           only consider tags matching <pattern>
+      --exclude <pattern>         do not consider tags matching <pattern>
+      --dirty <mark>[="-dirty"]   append <mark> on dirty working tree
+      --path string               path of git repo to describe (default $PWD)
+      --legacy                    format results like normal git describe
 ```
+
+(The last two flags `--path` and `--legacy` are unique to semver-describe.)
 
 ## Installation
 
@@ -115,6 +122,28 @@ There are some other benefits:
   SemVer v2.0 better expresses the situational context possible during a git
   describe: something that comes *after* a point in history, rather than
   *before* something to come.
+
+## Integration with various build tools
+
+### Go
+
+Configure a placeholder variable in your main package.
+
+```go
+package main
+
+var (
+    version = "unknown"
+)
+```
+
+And then override your build command (for example, in your Makefile):
+
+```shell
+go build -ldflags='main.version=$(git-semver-describe)' 
+```
+
+For an example, see this project itself?!
 
 ## Related Work
 
