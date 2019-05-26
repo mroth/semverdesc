@@ -75,6 +75,47 @@ var testCases = []struct {
 		want:   "v0.1.2+0.g71dd507",
 		legacy: "v0.1.2-0-g71dd507",
 	},
+	{
+		name: "exact dirty match without dirtymark (defaultopts)",
+		desc: DescribeResults{
+			TagName: "v0.1.2",
+			Ahead:   0,
+			HashStr: "71dd5072d51458a534ca7e0ec7c181d84754774d",
+			Dirty:   true,
+		},
+		opts:   DefaultFormatOptions(),
+		want:   "v0.1.2",
+		legacy: "v0.1.2",
+	},
+	{
+		name: "exact dirty match with dirtymark",
+		desc: DescribeResults{
+			TagName: "v0.1.2",
+			Ahead:   0,
+			HashStr: "71dd5072d51458a534ca7e0ec7c181d84754774d",
+			Dirty:   true,
+		},
+		opts: FormatOptions{
+			DirtyMark: "-dirty",
+		},
+		want:   "v0.1.2-dirty",
+		legacy: "v0.1.2-dirty",
+	},
+	{
+		name: "exact dirty match with dirtymark+long",
+		desc: DescribeResults{
+			TagName: "v0.1.2",
+			Ahead:   0,
+			HashStr: "71dd5072d51458a534ca7e0ec7c181d84754774d",
+			Dirty:   true,
+		},
+		opts: FormatOptions{
+			Long:      true,
+			DirtyMark: ".dirty",
+		},
+		want:   "v0.1.2+0.g71dd507.dirty",
+		legacy: "v0.1.2-0-g71dd507.dirty",
+	},
 }
 
 func TestDescribeResults_Format(t *testing.T) {

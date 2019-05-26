@@ -15,6 +15,8 @@ type DescribeResults struct {
 	// The SHA hash of the commit-ish used for the describe, converted to a
 	// string. For compatibility, we do not validate(?).
 	HashStr string
+	// Dirty is true if the working tree has local modifications.
+	Dirty bool
 }
 
 // FormatOptions control the output when formatting a DescribeResults.
@@ -34,7 +36,10 @@ type FormatOptions struct {
 	Abbrev uint
 	// Always use long format, even if exact match.
 	Long bool
-	// TODO: DirtyMark
+	// Describe the state of the working tree. When the working tree matches
+	// HEAD, the output is the same as "git describe HEAD". If the working tree
+	// has local modification DirtyMark is appended to it.
+	DirtyMark string
 }
 
 // Defaults which differ from their zero values
@@ -61,7 +66,7 @@ func (dr *DescribeResults) String() string {
 // you to modify default formatting begin with DefaultFormatOptions().
 func (dr *DescribeResults) Format(opts FormatOptions) string {
 	if (dr.Ahead == 0 || opts.Abbrev == 0) && !opts.Long {
-		return dr.TagName
+		return dr.TagName + dirtySuffix(dr, opts)
 	}
 	return semverLongFormat(dr, opts)
 }
@@ -73,19 +78,30 @@ func (dr *DescribeResults) Format(opts FormatOptions) string {
 // you to modify default formatting begin with DefaultFormatOptions().
 func (dr *DescribeResults) FormatLegacy(opts FormatOptions) string {
 	if (dr.Ahead == 0 || opts.Abbrev == 0) && !opts.Long {
-		return dr.TagName
+		return dr.TagName + dirtySuffix(dr, opts)
 	}
 	return legacyLongFormat(dr, opts)
 }
 
 func semverLongFormat(dr *DescribeResults, opts FormatOptions) string {
 	abbrev := effectiveAbbrev(dr, opts)
-	return fmt.Sprintf("%v+%v.g%v", dr.TagName, dr.Ahead, dr.HashStr[:abbrev])
+	return fmt.Sprintf("%v+%v.g%v%v",
+		dr.TagName, dr.Ahead, dr.HashStr[:abbrev], dirtySuffix(dr, opts))
 }
 
 func legacyLongFormat(dr *DescribeResults, opts FormatOptions) string {
 	abbrev := effectiveAbbrev(dr, opts)
-	return fmt.Sprintf("%v-%v-g%v", dr.TagName, dr.Ahead, dr.HashStr[:abbrev])
+	return fmt.Sprintf("%v-%v-g%v%v",
+		dr.TagName, dr.Ahead, dr.HashStr[:abbrev], dirtySuffix(dr, opts))
+}
+
+// dirtySuffix returns the DirtyMark suffix if *DescribeResults are both Dirty
+// and FormatOptions has a nonzero DirtyMark.
+func dirtySuffix(dr *DescribeResults, opts FormatOptions) string {
+	if dr.Dirty && opts.DirtyMark != "" {
+		return opts.DirtyMark
+	}
+	return ""
 }
 
 // Calculate the "effective" Abbrev which may differ from the one that is passed
