@@ -37,11 +37,15 @@ type FormatOptions struct {
 	// TODO: DirtyMark
 }
 
+// Defaults which differ from their zero values
+const (
+	DefaultFormatAbbrev = uint(7)
+)
+
 // DefaultFormatOptions returns the default FormatOptions.
 func DefaultFormatOptions() FormatOptions {
 	return FormatOptions{
-		Abbrev: 7,
-		Long:   false,
+		Abbrev: DefaultFormatAbbrev,
 	}
 }
 
