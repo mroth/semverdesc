@@ -17,18 +17,18 @@ var (
 	// flags compatible with git-describe...
 	// WONTFIX: --contains
 	// TODO: maybe --debug?
-	all  = pflag.Bool("all", false, "use any ref")
-	tags = pflag.Bool("tags", false, "use any tag, even unannotated")
-	long = pflag.Bool("long", false, "always use long format")
-	// TODO: maybe --first-parent?
-	abbrev     = pflag.Uint("abbrev", semverdesc.DefaultFormatAbbrev, "use `<n>` digits to display SHA-1s")
-	exactMatch = pflag.Bool("exact-match", false, "only output exact matches")
-	candidates = pflag.Uint("candidates", describer.DefaultCandidatesOption, "consider `<n>` most recent tags")
-	match      = pflag.String("match", "", "only consider tags matching `<pattern>`")
-	exclude    = pflag.String("exclude", "", "do not consider tags matching `<pattern>`")
+	all         = pflag.Bool("all", false, "use any ref")
+	tags        = pflag.Bool("tags", false, "use any tag, even unannotated")
+	long        = pflag.Bool("long", false, "always use long format")
+	firstParent = pflag.Bool("first-parent", false, "only follow first parent")
+	abbrev      = pflag.Uint("abbrev", semverdesc.DefaultFormatAbbrev, "use `<n>` digits to display SHA-1s")
+	exactMatch  = pflag.Bool("exact-match", false, "only output exact matches")
+	candidates  = pflag.Uint("candidates", describer.DefaultCandidatesOption, "consider `<n>` most recent tags")
+	match       = pflag.String("match", "", "only consider tags matching `<pattern>`")
+	exclude     = pflag.String("exclude", "", "do not consider tags matching `<pattern>`")
 	// TODO: maybe --always?
 	dirty = pflag.String("dirty", "", "append `<mark>` on dirty working tree")
-	// TODO: maybe --broken?
+	// WONTFIX: --broken, unless requested.  I dont think I've ever seen this used and complicates parsing.
 
 	// flags unique to us...
 	path   = pflag.String("path", "", "path of git repo to describe (default $PWD)")
@@ -54,6 +54,7 @@ func main() {
 		ExcludePattern: *exclude,
 		All:            *all,
 		ExactMatch:     *exactMatch,
+		FirstParent:    *firstParent,
 	}
 	formatOpts := semverdesc.FormatOptions{
 		Abbrev:    *abbrev,

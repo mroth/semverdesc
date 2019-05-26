@@ -57,6 +57,11 @@ type Options struct {
 	// not match any of the --exclude patterns. Use --no-exclude to clear and
 	// reset the list of patterns.
 	ExcludePattern string
+
+	// Follow only the first parent commit upon seeing a merge commit. This
+	// is useful when you wish to not match tags on branches merged in the
+	// history of the target commit.
+	FirstParent bool
 }
 
 // DefaultCandidatesOption is the suggested default value for *Options.Candidates
@@ -74,6 +79,7 @@ func Describe(path, commitish string, opts Options) (*semverdesc.DescribeResults
 		ExactMatch:     opts.ExactMatch,
 		MatchPattern:   opts.MatchPattern,
 		ExcludePattern: opts.ExcludePattern,
+		FirstParent:    opts.FirstParent,
 		// On the other hand, formatting options we set explicitly to make the
 		// output predictable and parse it later.
 		Abbrev:    pAbbrev,
