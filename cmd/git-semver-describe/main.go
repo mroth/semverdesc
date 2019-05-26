@@ -23,15 +23,13 @@ var (
 	// ...search
 	tags       = pflag.Bool("tags", false, "use any tag, even unannotated")
 	candidates = pflag.Uint("candidates", 10, "consider `<n>` most recent tags")
+	match      = pflag.String("match", "", "only consider tags matching `<pattern>`")
+	exclude    = pflag.String("exclude", "", "do not consider tags matching `<pattern>`")
 	// debug      = pflag.Bool("debug", false, "debug search strategy on stderr")
 	// ...formatting
 	abbrev = pflag.Uint("abbrev", 7, "use `<n>` digits to display SHA-1s")
 	long   = pflag.Bool("long", false, "always use long format")
 	dirty  = pflag.String("dirty", "", "append `<mark>` on dirty working tree")
-
-	// Some potential additions to implement down the line if there is strong demand:
-	// --match <pattern>     only consider tags matching <pattern>
-	// --exclude <pattern>   do not consider tags matching <pattern>
 )
 
 func main() {
@@ -46,9 +44,13 @@ func main() {
 	pflag.Parse()
 
 	opts := describer.Options{
-		// Debug:      *debug,
-		Tags:       *tags,
-		Candidates: *candidates,
+		Tags:           *tags,
+		Candidates:     *candidates,
+		MatchPattern:   *match,
+		ExcludePattern: *exclude,
+		// All:            false,
+		// Contains:       false,
+		// ExactMatch:     false,
 	}
 	formatOpts := semverdesc.FormatOptions{
 		Abbrev:    *abbrev,
