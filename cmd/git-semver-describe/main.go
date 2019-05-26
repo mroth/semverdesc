@@ -49,7 +49,6 @@ func main() {
 		MatchPattern:   *match,
 		ExcludePattern: *exclude,
 		// All:            false,
-		// Contains:       false,
 		// ExactMatch:     false,
 	}
 	formatOpts := semverdesc.FormatOptions{

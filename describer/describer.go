@@ -24,11 +24,6 @@ type Options struct {
 	// (non-annotated) tag.
 	Tags bool
 
-	// Instead of finding the tag that predates the commit, find the tag that
-	// comes after the commit, and thus contains it. Automatically implies
-	// --tags.
-	Contains bool
-
 	// Instead of considering only the 10 most recent tags as candidates to
 	// describe the input commit-ish consider up to <n> candidates.
 	// Increasing <n> above 10 will take slightly longer but may produce a
@@ -71,7 +66,6 @@ func Describe(path, commitish string, opts Options) (*semverdesc.DescribeResults
 		// DescribeOptions for the search are passed along directly
 		All:            opts.All,
 		Tags:           opts.Tags,
-		Contains:       opts.Contains,
 		Candidates:     opts.Candidates,
 		ExactMatch:     opts.ExactMatch,
 		MatchPattern:   opts.MatchPattern,
