@@ -115,7 +115,7 @@ func parsePDescribe(output []byte) (*semverdesc.DescribeResults, error) {
 	}
 
 	// if we ended in `-dirty`, last match group will not be empty
-	_ = len(match[4]) != 0 // TODO: assign dirty
+	dirty := len(match[4]) != 0
 	// sha is the 40 hex chars prior to that, but after the `-g`
 	sha := match[3]
 	// the distance is a series of digits
@@ -131,6 +131,7 @@ func parsePDescribe(output []byte) (*semverdesc.DescribeResults, error) {
 		TagName: string(tag),
 		Ahead:   uint(distance),
 		HashStr: string(sha),
+		Dirty:   dirty,
 	}, nil
 }
 

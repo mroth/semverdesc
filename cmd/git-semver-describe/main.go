@@ -27,18 +27,20 @@ var (
 	// ...formatting
 	abbrev = pflag.Uint("abbrev", 7, "use `<n>` digits to display SHA-1s")
 	long   = pflag.Bool("long", false, "always use long format")
+	dirty  = pflag.String("dirty", "", "append `<mark>` on dirty working tree")
 
 	// Some potential additions to implement down the line if there is strong demand:
 	// --match <pattern>     only consider tags matching <pattern>
 	// --exclude <pattern>   do not consider tags matching <pattern>
-	// --dirty[=<mark>]      append <mark> on dirty working tree (default: "-dirty") // see pflag.NoOptDefVal
 )
 
 func main() {
 	pflag.ErrHelp = errors.New("")
+	// https://github.com/spf13/pflag#setting-no-option-default-values-for-flags
+	pflag.Lookup("dirty").NoOptDefVal = "-dirty"
 	pflag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "usage: git semver-describe [<options>] [<commit-ish>]\n\n")
-		// fmt.Fprintf(os.Stderr, "   or: git semver-describe [<options>] --dirty\n\n") TODO: not yet implemented!
+		fmt.Fprintf(os.Stderr, "usage: git semver-describe [<options>] [<commit-ish>]\n")
+		fmt.Fprintf(os.Stderr, "   or: git semver-describe [<options>] --dirty\n\n")
 		pflag.PrintDefaults()
 	}
 	pflag.Parse()
@@ -49,8 +51,9 @@ func main() {
 		Candidates: *candidates,
 	}
 	formatOpts := semverdesc.FormatOptions{
-		Abbrev: *abbrev,
-		Long:   *long,
+		Abbrev:    *abbrev,
+		Long:      *long,
+		DirtyMark: *dirty,
 	}
 
 	commitish := pflag.Arg(0)
