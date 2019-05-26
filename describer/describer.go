@@ -161,10 +161,10 @@ func parsePDescribe(output []byte) (*semverdesc.DescribeResults, error) {
 	tag := match[1]
 
 	return &semverdesc.DescribeResults{
-		TagName: string(tag),
-		Ahead:   uint(distance),
-		HashStr: string(sha),
-		Dirty:   dirty,
+		TagName:  string(tag),
+		Distance: uint(distance),
+		HashStr:  string(sha),
+		Dirty:    dirty,
 	}, nil
 }
 
@@ -206,7 +206,7 @@ func describe(repo *git.Repository, hash *plumbing.Hash, opts Options) (*semverd
 func convert(dr *gitgo.DescribeResults) semverdesc.DescribeResults {
 	return semverdesc.DescribeResults{
 		TagName: dr.Tag.Name().Short(),
-		Ahead:   uint(dr.Distance),
+		Distance:   uint(dr.Distance),
 		HashStr: dr.Hash.String(),
 	}
 }

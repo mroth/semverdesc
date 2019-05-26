@@ -13,7 +13,7 @@ var testCases = []struct {
 		name: "default",
 		desc: DescribeResults{
 			TagName: "v0.2.1",
-			Ahead:   15,
+			Distance:   15,
 			HashStr: "d71dd5072d51458a534ca7e0ec7c181d84754774",
 		},
 		opts:   DefaultFormatOptions(),
@@ -24,7 +24,7 @@ var testCases = []struct {
 		name: "adjust abbrev",
 		desc: DescribeResults{
 			TagName: "v0.2.1",
-			Ahead:   15,
+			Distance:   15,
 			HashStr: "d71dd5072d51458a534ca7e0ec7c181d84754774",
 		},
 		opts: FormatOptions{
@@ -42,7 +42,7 @@ var testCases = []struct {
 		name: "adjust abbrev overflow",
 		desc: DescribeResults{
 			TagName: "v0.2.1",
-			Ahead:   15,
+			Distance:   15,
 			HashStr: "d71dd5",
 		},
 		opts: FormatOptions{
@@ -55,7 +55,7 @@ var testCases = []struct {
 		name: "exact match",
 		desc: DescribeResults{
 			TagName: "v0.1.2",
-			Ahead:   0,
+			Distance:   0,
 			HashStr: "71dd5072d51458a534ca7e0ec7c181d84754774d",
 		},
 		opts:   DefaultFormatOptions(),
@@ -66,7 +66,7 @@ var testCases = []struct {
 		name: "exact match with long",
 		desc: DescribeResults{
 			TagName: "v0.1.2",
-			Ahead:   0,
+			Distance:   0,
 			HashStr: "71dd5072d51458a534ca7e0ec7c181d84754774d",
 		},
 		opts: FormatOptions{
@@ -79,7 +79,7 @@ var testCases = []struct {
 		name: "exact dirty match without dirtymark (defaultopts)",
 		desc: DescribeResults{
 			TagName: "v0.1.2",
-			Ahead:   0,
+			Distance:   0,
 			HashStr: "71dd5072d51458a534ca7e0ec7c181d84754774d",
 			Dirty:   true,
 		},
@@ -91,7 +91,7 @@ var testCases = []struct {
 		name: "exact dirty match with dirtymark",
 		desc: DescribeResults{
 			TagName: "v0.1.2",
-			Ahead:   0,
+			Distance:   0,
 			HashStr: "71dd5072d51458a534ca7e0ec7c181d84754774d",
 			Dirty:   true,
 		},
@@ -105,7 +105,7 @@ var testCases = []struct {
 		name: "exact dirty match with dirtymark+long",
 		desc: DescribeResults{
 			TagName: "v0.1.2",
-			Ahead:   0,
+			Distance:   0,
 			HashStr: "71dd5072d51458a534ca7e0ec7c181d84754774d",
 			Dirty:   true,
 		},

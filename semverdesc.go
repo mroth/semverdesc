@@ -11,7 +11,7 @@ type DescribeResults struct {
 	// The name of the matched tag
 	TagName string
 	// Number of commits ahead
-	Ahead uint
+	Distance uint
 	// The SHA hash of the commit-ish used for the describe, converted to a
 	// string. For compatibility, we do not validate(?).
 	HashStr string
@@ -85,7 +85,7 @@ func (dr *DescribeResults) FormatLegacy(opts FormatOptions) string {
 
 // determine whether short format is appropriate for results and format opts
 func shouldUseShortFormat(dr *DescribeResults, opts FormatOptions) bool {
-	return (dr.Ahead == 0 || opts.Abbrev == 0) && !opts.Long
+	return (dr.Distance == 0 || opts.Abbrev == 0) && !opts.Long
 }
 
 // shortFormat is the same for both semver and legacy
@@ -96,13 +96,13 @@ func shortFormat(dr *DescribeResults, opts FormatOptions) string {
 func semverLongFormat(dr *DescribeResults, opts FormatOptions) string {
 	abbrev := effectiveAbbrev(dr, opts)
 	return fmt.Sprintf("%v+%v.g%v%v",
-		dr.TagName, dr.Ahead, dr.HashStr[:abbrev], dirtySuffix(dr, opts))
+		dr.TagName, dr.Distance, dr.HashStr[:abbrev], dirtySuffix(dr, opts))
 }
 
 func legacyLongFormat(dr *DescribeResults, opts FormatOptions) string {
 	abbrev := effectiveAbbrev(dr, opts)
 	return fmt.Sprintf("%v-%v-g%v%v",
-		dr.TagName, dr.Ahead, dr.HashStr[:abbrev], dirtySuffix(dr, opts))
+		dr.TagName, dr.Distance, dr.HashStr[:abbrev], dirtySuffix(dr, opts))
 }
 
 // dirtySuffix returns the DirtyMark suffix if *DescribeResults are both Dirty
