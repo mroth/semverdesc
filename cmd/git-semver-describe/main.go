@@ -15,8 +15,6 @@ import (
 
 var (
 	// flags compatible with git-describe...
-	// WONTFIX: --contains
-	// TODO: maybe --debug?
 	all         = pflag.Bool("all", false, "use any ref")
 	tags        = pflag.Bool("tags", false, "use any tag, even unannotated")
 	long        = pflag.Bool("long", false, "always use long format")
@@ -26,9 +24,7 @@ var (
 	candidates  = pflag.Uint("candidates", describer.DefaultCandidatesOption, "consider `<n>` most recent tags")
 	match       = pflag.String("match", "", "only consider tags matching `<pattern>`")
 	exclude     = pflag.String("exclude", "", "do not consider tags matching `<pattern>`")
-	// TODO: maybe --always?
-	dirty = pflag.String("dirty", "", "append `<mark>` on dirty working tree")
-	// WONTFIX: --broken, unless requested.  I dont think I've ever seen this used and complicates parsing.
+	dirty       = pflag.String("dirty", "", "append `<mark>` on dirty working tree")
 
 	// flags unique to us...
 	path   = pflag.String("path", "", "path of git repo to describe (default $PWD)")

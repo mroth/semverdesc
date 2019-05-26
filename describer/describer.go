@@ -64,6 +64,25 @@ type Options struct {
 	FirstParent bool
 }
 
+/*
+There are a few git describe related flags not currently implemented in
+describer.
+
+TODO: maybe --debug?
+
+WONTFIX: --always, unless strongly requested. Having a fallback like this is
+incompatible with --long and thus makes parsing more complicated (we could also
+just implement ourselves.)
+
+WONTFIX: --broken, unless requested.  I dont think I've ever seen this used and
+complicates parsing.
+
+WONTFIX: --contains. This is a totally different weird format, e.g. v0.3.0~10 is
+ten commits prior to v0.3.0. I don't believe it currently fits in with this use
+case so lets remove it instead of trying to figure out how to parse and
+translate.
+*/
+
 // DefaultCandidatesOption is the suggested default value for *Options.Candidates
 const DefaultCandidatesOption = uint(10)
 
