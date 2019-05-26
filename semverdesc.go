@@ -65,8 +65,8 @@ func (dr *DescribeResults) String() string {
 // Note that the zero value FormatOptions are not defaults in all cases, so if
 // you to modify default formatting begin with DefaultFormatOptions().
 func (dr *DescribeResults) Format(opts FormatOptions) string {
-	if (dr.Ahead == 0 || opts.Abbrev == 0) && !opts.Long {
-		return dr.TagName + dirtySuffix(dr, opts)
+	if shouldUseShortFormat(dr, opts) {
+		return shortFormat(dr, opts)
 	}
 	return semverLongFormat(dr, opts)
 }
@@ -77,10 +77,20 @@ func (dr *DescribeResults) Format(opts FormatOptions) string {
 // Note that the zero value FormatOptions are not defaults in all cases, so if
 // you to modify default formatting begin with DefaultFormatOptions().
 func (dr *DescribeResults) FormatLegacy(opts FormatOptions) string {
-	if (dr.Ahead == 0 || opts.Abbrev == 0) && !opts.Long {
-		return dr.TagName + dirtySuffix(dr, opts)
+	if shouldUseShortFormat(dr, opts) {
+		return shortFormat(dr, opts)
 	}
 	return legacyLongFormat(dr, opts)
+}
+
+// determine whether short format is appropriate for results and format opts
+func shouldUseShortFormat(dr *DescribeResults, opts FormatOptions) bool {
+	return (dr.Ahead == 0 || opts.Abbrev == 0) && !opts.Long
+}
+
+// shortFormat is the same for both semver and legacy
+func shortFormat(dr *DescribeResults, opts FormatOptions) string {
+	return dr.TagName + dirtySuffix(dr, opts)
 }
 
 func semverLongFormat(dr *DescribeResults, opts FormatOptions) string {
