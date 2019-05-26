@@ -21,9 +21,9 @@ var (
 	tags = pflag.Bool("tags", false, "use any tag, even unannotated")
 	long = pflag.Bool("long", false, "always use long format")
 	// TODO: maybe --first-parent?
-	abbrev     = pflag.Uint("abbrev", 7, "use `<n>` digits to display SHA-1s")
+	abbrev     = pflag.Uint("abbrev", semverdesc.DefaultFormatAbbrev, "use `<n>` digits to display SHA-1s")
 	exactMatch = pflag.Bool("exact-match", false, "only output exact matches")
-	candidates = pflag.Uint("candidates", 10, "consider `<n>` most recent tags")
+	candidates = pflag.Uint("candidates", describer.DefaultCandidatesOption, "consider `<n>` most recent tags")
 	match      = pflag.String("match", "", "only consider tags matching `<pattern>`")
 	exclude    = pflag.String("exclude", "", "do not consider tags matching `<pattern>`")
 	// TODO: maybe --always?

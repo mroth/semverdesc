@@ -5,6 +5,7 @@ package describer
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"os/exec"
 	"regexp"
 	"strconv"
@@ -58,6 +59,9 @@ type Options struct {
 	ExcludePattern string
 }
 
+// DefaultCandidatesOption is the suggested default value for *Options.Candidates
+const DefaultCandidatesOption = uint(10)
+
 // Note that the returned error may be of type exec.ExitError if there was an error
 // condition returned from the underlying git describe command. You can check for
 // this to handle the output differently!
@@ -72,9 +76,9 @@ func Describe(path, commitish string, opts Options) (*semverdesc.DescribeResults
 		ExcludePattern: opts.ExcludePattern,
 		// On the other hand, formatting options we set explicitly to make the
 		// output predictable and parse it later.
-		Abbrev:    40,
-		Long:      true,
-		DirtyMark: "-dirty",
+		Abbrev:    pAbbrev,
+		Long:      pLongIsAlwaysTrue,
+		DirtyMark: pDirtyMark,
 	}
 
 	args := []string{"describe"}
@@ -94,7 +98,17 @@ func Describe(path, commitish string, opts Options) (*semverdesc.DescribeResults
 	return parsePDescribe(output)
 }
 
-var pdescRegex = regexp.MustCompile(`^(.+)-(\d+)-g([0-9a-f]{40})(-dirty)?$`)
+// predictable formatting options
+const (
+	pAbbrev           = uint(40)
+	pDirtyMark        = "-dirty"
+	pLongIsAlwaysTrue = true
+)
+
+// regex to match git describe output when predictable format options applied
+var pdescRegex = regexp.MustCompile(
+	fmt.Sprintf(`^(.+)-(\d+)-g([0-9a-f]{%d})(%s)?$`, pAbbrev, pDirtyMark),
+)
 
 // parsePDescribe parses our "predictable" describe as defined by our
 // expected describe output options.
@@ -110,7 +124,7 @@ func parsePDescribe(output []byte) (*semverdesc.DescribeResults, error) {
 
 	// if we ended in `-dirty`, last match group will not be empty
 	dirty := len(match[4]) != 0
-	// sha is the 40 hex chars prior to that, but after the `-g`
+	// sha is the pAbbrev hex chars prior to that, but after the `-g`
 	sha := match[3]
 	// the distance is a series of digits
 	digits := string(match[2])
