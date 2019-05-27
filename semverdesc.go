@@ -142,6 +142,3 @@ func effectiveAbbrev(dr *DescribeResults, opts FormatOptions) uint {
 	}
 	return opts.Abbrev
 }
-
-// TODO: allow parsing old strings? urgh... could be messy
-// func FromLegacy(in string) (*DescribeResults, error) {}
