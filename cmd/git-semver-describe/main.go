@@ -59,9 +59,6 @@ func main() {
 	}
 
 	commitish := pflag.Arg(0)
-	// if commitish == "" {
-	// 	commitish = "HEAD"
-	// }
 	d, err := describer.Describe(*path, commitish, opts)
 	if err != nil {
 		// if was underlying git describe error, pass it along exactly
