@@ -1,13 +1,22 @@
+// Package localgit provides helpers for constructing command line flags for
+// interacting with the git cli tool.
 package localgit
 
 import "fmt"
 
+/*
+TODO: git describe actually supports multiple invocations of --match/--exclude,
+build in support here even if not using just to cover all possible bases.
+*/
+
+// DescribeOptions are possible flags for modifying a `git describe` operation.
 type DescribeOptions struct {
-	// Describe the state of the working tree. When the working tree matches HEAD, the output
-	// is the same as "git describe HEAD". If the working tree has local modification
-	// "-dirty" is appended to it. If a repository is corrupt and Git cannot determine if
-	// there is local modification, Git will error out, unless `--broken' is given, which
-	// appends the suffix "-broken" instead.
+	// Describe the state of the working tree. When the working tree matches
+	// HEAD, the output is the same as "git describe HEAD". If the working tree
+	// has local modification "-dirty" is appended to it. If a repository is
+	// corrupt and Git cannot determine if there is local modification, Git will
+	// error out, unless `--broken' is given, which appends the suffix "-broken"
+	// instead.
 	DirtyMark  string
 	BrokenMark string
 
@@ -43,8 +52,8 @@ type DescribeOptions struct {
 	// commit). This is a synonym for --candidates=0.
 	ExactMatch bool
 
-	// Verbosely display information about the searching strategy being employed to standard
-	// error. The tag name will still be printed to standard out
+	// Verbosely display information about the searching strategy being employed
+	// to standard error. The tag name will still be printed to standard out.
 	Debug bool
 
 	// Always output the long format (the tag, the number of commits and the
@@ -107,29 +116,24 @@ func NewDescribeOptions() *DescribeOptions {
 // Set takes a function that operates on a *DescribeOptions, executes it on this
 // instance, and returns a pointer.
 //
-// This is a convenience function that allows you to instantiate
+// This is a convenience function that allows you to instantiate default describe
+// options and then override some in a single command.
 //
 // Example:
 //
 //	opts := NewDescribeOptions().Set(func(o *DescribeOptions) { o.All = true })
 //
-// TODO: migrate this example to an actual godoc Example?
-//
-// In a perfect world, we would not need this and could instead either use
-// default struct values or even better Option types (to handle the
-// disambiguation between the zero value uints in DescribeOptions), but this is
-// not a perfect world, it is Go! :shrug:
 func (o *DescribeOptions) Set(f func(*DescribeOptions)) *DescribeOptions {
+	// In a perfect world, we would not need this at all and could instead
+	// either use default struct values or even better Option types (to handle
+	// the disambiguation between the zero value uints in DescribeOptions), but
+	// this is not a perfect world, it is Go. :shrug:
 	f(o)
 	return o
 }
 
-// func (o *DescribeOptions) Args() []string {
-// 	return []string{"describe", o.Flags()} // + TARGET
-// }
-
-// Flags returns the minimal set of arg flags suitable to construct a git-describe
-// command line invocation with those options.
+// Flags returns the minimal set of arg flags suitable to construct a
+// git-describe command line invocation with those options.
 //
 // By minimal it is meant that only flags which set options that differ from the
 // default behavior will be included.
