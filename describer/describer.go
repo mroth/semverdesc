@@ -176,16 +176,16 @@ func parsePDescribe(output []byte) (*semverdesc.DescribeResults, error) {
 }
 
 /*
-// In current state, this is essentially a bridge between semverdesc and gitgo,
+// In current state, this is essentially a bridge between semverdesc and gogitdesc,
 // so neither need to know about eachother. It's a little duplicative, but was
 // extracted so people who just want semverdesc library functions dont need to
 // bundle all the rest, which matters since gogit is so huge.
 //
-// This also enables us to keep our gitgo package closer to a pure extension of
+// This also enables us to keep our gogitdesc package closer to a pure extension of
 // gogit and not build our specific needs in, eventually leading to something
 // that might be able to be a PR on go-git project.
 
-type Options gitgo.DescribeOptions
+type Options gogitdesc.DescribeOptions
 
 func DescribeAtPath(path string, commitish string, opts Options) (*semverdesc.DescribeResults, error) {
 	repo, err := git.PlainOpen(path)
@@ -201,8 +201,8 @@ func DescribeAtPath(path string, commitish string, opts Options) (*semverdesc.De
 }
 
 func describe(repo *git.Repository, hash *plumbing.Hash, opts Options) (*semverdesc.DescribeResults, error) {
-	ggOpts := gitgo.DescribeOptions(opts)
-	dr, err := gitgo.DescribeCommit(repo, hash, &ggOpts)
+	ggOpts := gogitdesc.DescribeOptions(opts)
+	dr, err := gogitdesc.DescribeCommit(repo, hash, &ggOpts)
 	if err != nil {
 		return nil, err
 	}
@@ -210,7 +210,7 @@ func describe(repo *git.Repository, hash *plumbing.Hash, opts Options) (*semverd
 	return &res, nil
 }
 
-func convert(dr *gitgo.DescribeResults) semverdesc.DescribeResults {
+func convert(dr *gogitdesc.DescribeResults) semverdesc.DescribeResults {
 	return semverdesc.DescribeResults{
 		TagName: dr.Tag.Name().Short(),
 		Distance:   uint(dr.Distance),

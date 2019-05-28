@@ -1,4 +1,4 @@
-// Package gitgo extends go-git to have rudimentary `git describe`
+// Package gogitdesc extends go-git to have rudimentary `git describe`
 // functionality, which is not currently built-in to the library.
 //
 // Work in progress in the core library (appears abandoned?!):
@@ -7,7 +7,19 @@
 // See also the Rust bindings for libgit2 which I believe perhaps exposes a
 // better interface for this:
 // https://docs.rs/git2
-package gitgo
+//
+// Other valuable references:
+//
+// git describe source code:
+// https://github.com/git/git/blob/master/builtin/describe.c
+//
+// libgit2 describe source:
+// https://github.com/libgit2/libgit2/blob/master/src/describe.c
+//
+// my open go-git issue report:
+// ResolveRevision doesn't resolve on abbreviated unique hashes
+// https://github.com/src-d/go-git/issues/1148
+package gogitdesc
 
 import (
 	"bytes"
@@ -37,59 +49,6 @@ type DescribeResults struct {
 	// Dirty bool
 }
 
-// BUNCH OF LEFTOVER FORMATTING BOILERPLATE FROM VARIOUS EXPERIMENTS HERE.
-// CURRENTLY IM NOT ACTUALLY EVEN DOING FORMATTING HERE (since semverdesc
-// handles that, see over there for some real formatting code), BUT MAY WANT TO
-// IMPLEMENT IN FUTURE TO GET THIS CLOSER TO SOMETHING THAT COULD BECOME A CORE
-// LIB PR?
-/*
-func (dr *DescribeResults) String() string {
-	if dr.Distance == 0 {
-		return dr.Tag.Name().Short()
-	}
-	return dr.longString()
-}
-
-// LongString is equivalent of the output model of `--long` when passed to `git
-// describe`.
-//
-// Always output the long format (the tag, the number of commits and the
-// abbreviated commit name) even when it matches a tag. This is useful when you
-// want to see parts of the commit object name in "describe" output, even when
-// the commit in question happens to be a tagged version. Instead of just
-// emitting the tag name, it will describe such a commit as v1.2-0-gdeadbee (0th
-// commit since tag v1.2 that points at object deadbee....).
-//
-// The number of additional commits is the number of commits which would be
-// displayed by "git log v1.0.4..parent".
-//
-// The hash suffix is "-g" + 7-char abbreviation for the tip commit of parent.
-// The "g" prefix stands for "git" and is used to allow describing the version
-// of a software depending on the SCM the software is managed with. This is
-// useful in an environment where people may use different SCMs.
-func (dr *DescribeResults) longString() string {
-	return fmt.Sprintf("%v-%v-g%v",
-		dr.Tag.Name().Short(), dr.Distance, dr.Reference.Hash().String()[:7])
-}
-
-// DescribeFormatOptions can be used to customize how a description is formatted.
-type DescribeFormatOptions struct {
-	// The value is the lower bound for the length of the abbreviated string, and the default is 7.
-	Abbrev uint
-	// Sets whether or not the long format is used even when a shorter name could be used.
-	Long bool
-	// If the workdir is dirty and this is set, this string will be appended to the description string.
-	DirtySuffix string
-}
-
-func (o *DescribeFormatOptions) Validate() error {
-	if o.Abbrev == 0 {
-		o.Abbrev = 7
-	}
-	return nil
-}
-*/
-
 type DescribeOptions struct {
 	Debug      bool
 	Tags       bool
@@ -107,7 +66,7 @@ func (o *DescribeOptions) Validate() error {
 	return nil
 }
 
-// Describe is the `git describe` as WIP in the potentially abandoned PR#816.
+// DescribeCommit is the `git describe` as WIP in the potentially abandoned PR#816.
 //
 // Few minor modifications:
 //
@@ -274,3 +233,56 @@ func makeTagMap(r *git.Repository) (map[plumbing.Hash]*plumbing.Reference, error
 	tagIterator.Close()
 	return tags, nil
 }
+
+// BUNCH OF LEFTOVER FORMATTING BOILERPLATE FROM VARIOUS EXPERIMENTS HERE.
+// CURRENTLY IM NOT ACTUALLY EVEN DOING FORMATTING HERE (since semverdesc
+// handles that, see over there for some real formatting code), BUT MAY WANT TO
+// IMPLEMENT IN FUTURE TO GET THIS CLOSER TO SOMETHING THAT COULD BECOME A CORE
+// LIB PR?
+/*
+func (dr *DescribeResults) String() string {
+	if dr.Distance == 0 {
+		return dr.Tag.Name().Short()
+	}
+	return dr.longString()
+}
+
+// LongString is equivalent of the output model of `--long` when passed to `git
+// describe`.
+//
+// Always output the long format (the tag, the number of commits and the
+// abbreviated commit name) even when it matches a tag. This is useful when you
+// want to see parts of the commit object name in "describe" output, even when
+// the commit in question happens to be a tagged version. Instead of just
+// emitting the tag name, it will describe such a commit as v1.2-0-gdeadbee (0th
+// commit since tag v1.2 that points at object deadbee....).
+//
+// The number of additional commits is the number of commits which would be
+// displayed by "git log v1.0.4..parent".
+//
+// The hash suffix is "-g" + 7-char abbreviation for the tip commit of parent.
+// The "g" prefix stands for "git" and is used to allow describing the version
+// of a software depending on the SCM the software is managed with. This is
+// useful in an environment where people may use different SCMs.
+func (dr *DescribeResults) longString() string {
+	return fmt.Sprintf("%v-%v-g%v",
+		dr.Tag.Name().Short(), dr.Distance, dr.Reference.Hash().String()[:7])
+}
+
+// DescribeFormatOptions can be used to customize how a description is formatted.
+type DescribeFormatOptions struct {
+	// The value is the lower bound for the length of the abbreviated string, and the default is 7.
+	Abbrev uint
+	// Sets whether or not the long format is used even when a shorter name could be used.
+	Long bool
+	// If the workdir is dirty and this is set, this string will be appended to the description string.
+	DirtySuffix string
+}
+
+func (o *DescribeFormatOptions) Validate() error {
+	if o.Abbrev == 0 {
+		o.Abbrev = 7
+	}
+	return nil
+}
+*/
