@@ -43,6 +43,13 @@ func TestDescribeOptions_Flags(t *testing.T) {
 			}),
 			want: []string{"--abbrev=0", "--candidates=0"},
 		},
+		{
+			name: "value flag",
+			opts: NewDescribeOptions().Set(func(o *DescribeOptions) {
+				o.DirtyMark = "-filthy"
+			}),
+			want: []string{"--dirty=-filthy"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
