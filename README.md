@@ -140,7 +140,7 @@ var (
 And then override your build command (for example, in your Makefile):
 
 ```shell
-go build -ldflags='main.version=$(git-semver-describe)' 
+go build -ldflags='-X main.version=$(git-semver-describe --tags)' 
 ```
 
 For an example, see this project itself?!
