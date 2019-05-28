@@ -90,6 +90,26 @@ const DefaultCandidatesOption = uint(10)
 // condition returned from the underlying git describe command. You can check for
 // this to handle the output differently!
 func Describe(path, commitish string, opts Options) (*semverdesc.DescribeResults, error) {
+	cmd := buildCmd(path, commitish, opts)
+	output, err := cmd.Output()
+	if err != nil {
+		return nil, err
+	}
+
+	return parsePDescribe(output)
+}
+
+// Options used to get predictable formatting out of the underlying localgit
+// describe operation, so that we can parse it in a reasoned way.
+const (
+	pAbbrev    = uint(40)
+	pDirtyMark = "-dirty"
+	pLong      = true
+)
+
+// buildCmd creates the localgit shell command to do the describe and return
+// our predictable output.
+func buildCmd(path, commitish string, opts Options) *exec.Cmd {
 	gdOpts := localgit.DescribeOptions{
 		// DescribeOptions for the search are passed along directly
 		All:            opts.All,
@@ -102,7 +122,7 @@ func Describe(path, commitish string, opts Options) (*semverdesc.DescribeResults
 		// On the other hand, formatting options we set explicitly to make the
 		// output predictable and parse it later.
 		Abbrev:    pAbbrev,
-		Long:      pLongIsAlwaysTrue,
+		Long:      pLong,
 		DirtyMark: pDirtyMark,
 	}
 
@@ -114,21 +134,8 @@ func Describe(path, commitish string, opts Options) (*semverdesc.DescribeResults
 	cmd := exec.Command("git", args...)
 	// git describe assumes working directory, so we just set that based on path :-)
 	cmd.Dir = path
-
-	output, err := cmd.Output()
-	if err != nil {
-		return nil, err
-	}
-
-	return parsePDescribe(output)
+	return cmd
 }
-
-// predictable formatting options
-const (
-	pAbbrev           = uint(40)
-	pDirtyMark        = "-dirty"
-	pLongIsAlwaysTrue = true
-)
 
 // regex to match git describe output when predictable format options applied
 var pdescRegex = regexp.MustCompile(
