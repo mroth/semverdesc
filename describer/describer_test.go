@@ -37,6 +37,28 @@ func Test_parsePDescribe(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name:   "prerelease semver tag",
+			output: []byte("v1.2.3-rc2-0-g56dc2041f2c45ab15d41e63058c1c44fff905e81"),
+			want: &semverdesc.DescribeResults{
+				TagName:  "v1.2.3-rc2",
+				Distance: 0,
+				HashStr:  "56dc2041f2c45ab15d41e63058c1c44fff905e81",
+				Dirty:    false,
+			},
+			wantErr: false,
+		},
+		{
+			name:   "prerelease semver tag with distance",
+			output: []byte("v1.2.3-rc2-13-g56dc2041f2c45ab15d41e63058c1c44fff905e81"),
+			want: &semverdesc.DescribeResults{
+				TagName:  "v1.2.3-rc2",
+				Distance: 13,
+				HashStr:  "56dc2041f2c45ab15d41e63058c1c44fff905e81",
+				Dirty:    false,
+			},
+			wantErr: false,
+		},
+		{
 			name:   "dirty workdir",
 			output: []byte("v1.2.3-13-g56dc2041f2c45ab15d41e63058c1c44fff905e81-dirty"),
 			want: &semverdesc.DescribeResults{

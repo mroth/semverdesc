@@ -76,6 +76,28 @@ var testCases = []struct {
 		legacy: "v0.1.2-0-g71dd507",
 	},
 	{
+		name: "prerelease tag",
+		desc: DescribeResults{
+			TagName: "v1.0.0-rc2",
+			Distance:   0,
+			HashStr: "71dd5072d51458a534ca7e0ec7c181d84754774d",
+		},
+		opts: DefaultFormatOptions(),
+		want:   "v1.0.0-rc2",
+		legacy: "v1.0.0-rc2",
+	},
+	{
+		name: "prerelease tag with distance",
+		desc: DescribeResults{
+			TagName: "v1.0.0-rc2",
+			Distance:   2,
+			HashStr: "71dd5072d51458a534ca7e0ec7c181d84754774d",
+		},
+		opts: DefaultFormatOptions(),
+		want:   "v1.0.0-rc2+2.g71dd507",
+		legacy: "v1.0.0-rc2-2-g71dd507",
+	},
+	{
 		name: "exact dirty match without dirtymark (defaultopts)",
 		desc: DescribeResults{
 			TagName: "v0.1.2",
