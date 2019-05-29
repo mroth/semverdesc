@@ -14,6 +14,10 @@ import (
 )
 
 var (
+	buildVersion = "0.0.0-dev"
+)
+
+var (
 	// flags compatible with git-describe...
 	all         = pflag.Bool("all", false, "use any ref")
 	tags        = pflag.Bool("tags", false, "use any tag, even unannotated")
@@ -27,21 +31,27 @@ var (
 	dirty       = pflag.String("dirty", "", "append `<mark>` on dirty working tree")
 
 	// flags unique to us...
-	path   = pflag.String("path", "", "path of git repo to describe (default $PWD)")
-	legacy = pflag.Bool("legacy", false, "format results like normal git describe")
+	path    = pflag.String("path", "", "path of git repo to describe (default $PWD)")
+	legacy  = pflag.Bool("legacy", false, "format results like normal git describe")
+	version = pflag.Bool("version", false, "display version information and exit")
 )
 
 func main() {
 	pflag.ErrHelp = errors.New("")
 	pflag.CommandLine.SortFlags = false
-	// https://github.com/spf13/pflag#setting-no-option-default-values-for-flags
-	pflag.Lookup("dirty").NoOptDefVal = "-dirty"
+	pflag.CommandLine.Lookup("dirty").NoOptDefVal = "-dirty"
+	pflag.CommandLine.MarkHidden("version")
 	pflag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "usage: git semver-describe [<options>] [<commit-ish>]\n")
 		fmt.Fprintf(os.Stderr, "   or: git semver-describe [<options>] --dirty\n\n")
 		pflag.PrintDefaults()
 	}
 	pflag.Parse()
+
+	if *version {
+		fmt.Println("git-semver-describe version", buildVersion)
+		os.Exit(0)
+	}
 
 	opts := describer.Options{
 		Tags:           *tags,
