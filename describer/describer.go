@@ -14,6 +14,7 @@ import (
 	"github.com/mroth/semverdesc/localgit"
 )
 
+// Options that can adjust the  describe operation.
 type Options struct {
 	// Instead of using only the annotated tags, use any ref found in refs/
 	// namespace. This option enables matching any known branch, remote-tracking
@@ -86,9 +87,14 @@ translate.
 // DefaultCandidatesOption is the suggested default value for *Options.Candidates
 const DefaultCandidatesOption = uint(10)
 
-// Note that the returned error may be of type exec.ExitError if there was an error
-// condition returned from the underlying git describe command. You can check for
-// this to handle the output differently!
+// Describe attempts to perform a git describe operation on a git repository
+// located at path, with an optional commit-ish describing the target to
+// describe. For the default case (describing HEAD), set the commitish as the
+// zero value.
+//
+// Note that the returned error may be of type exec.ExitError if there was an
+// error condition returned from the underlying git describe command. You can
+// check for this to handle the output differently!
 func Describe(path, commitish string, opts Options) (*semverdesc.DescribeResults, error) {
 	cmd := buildCmd(path, commitish, opts)
 	output, err := cmd.Output()
