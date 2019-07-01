@@ -17,10 +17,12 @@ v0.2.1-15-gd71dd50
 ## Usage
 
 For the most part, this is a drop-in replacement for `git describe`, with nearly
-identical option syntax. The official git-describe has [tons of
+identical option syntax.
+
+The official git-describe has [tons of
 options](https://git-scm.com/docs/git-describe), a few of which are not
 supported here, but I believe we have covered the entire subset of options that
-are probably useful when using git tags for semantic versioning.
+are potentially useful when using git tags for semantic versioning:
 
 ```
 $ git semver-describe --help
@@ -37,11 +39,13 @@ usage: git semver-describe [<options>] [<commit-ish>]
       --match <pattern>           only consider tags matching <pattern>
       --exclude <pattern>         do not consider tags matching <pattern>
       --dirty <mark>[="-dirty"]   append <mark> on dirty working tree
-      --path string               path of git repo to describe (default $PWD)
+      --path <path>               describe repository at <path> (default $PWD)
+      --trim <prefix>             trim <prefix> from results
       --legacy                    format results like normal git describe
 ```
 
-(The last two flags `--path` and `--legacy` are unique to semver-describe.)
+The last three flags: `--path`, `--trim` and `--legacy` are those unique to
+semver-describe.
 
 ## Installation
 
@@ -73,7 +77,6 @@ versioning git tags:
   "prelease" versions come before a specific release. During early development,
   you don't necessarily know if the next release will be a major/minor/patch
   release.
-- By definition, ***
 - The output of git describe looks close to valid semver to the naked eye, but
   does not actually adhere to the specification.
 - Once you tag an actual pre-release version (e.g. ), git describe's output
@@ -140,7 +143,7 @@ var (
 And then override your build command (for example, in your Makefile):
 
 ```shell
-go build -ldflags='-X main.version=$(git-semver-describe --tags)' 
+go build -ldflags='-X main.version=$(git-semver-describe --tags)'
 ```
 
 For an example, see this project itself?!

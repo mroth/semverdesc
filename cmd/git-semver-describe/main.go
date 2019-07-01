@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/mroth/semverdesc"
 	"github.com/mroth/semverdesc/describer"
@@ -31,9 +32,10 @@ var (
 	dirty       = pflag.String("dirty", "", "append `<mark>` on dirty working tree")
 
 	// flags unique to us...
-	path    = pflag.String("path", "", "path of git repo to describe (default $PWD)")
-	legacy  = pflag.Bool("legacy", false, "format results like normal git describe")
-	version = pflag.Bool("version", false, "display version information and exit")
+	path       = pflag.String("path", "", "describe repository at `<path>` (default $PWD)")
+	trimPrefix = pflag.String("trim", "", "trim `<prefix>` from results")
+	legacy     = pflag.Bool("legacy", false, "format results like normal git describe")
+	version    = pflag.Bool("version", false, "display version information and exit")
 )
 
 func main() {
@@ -81,9 +83,17 @@ func main() {
 		os.Exit(1)
 	}
 
+	// format and print the results
+	//
+	// the prefix trimming option is handled locally rather than in the library
+	// since it is a convenience function for cross-platform CLI handiness, but
+	// is not necessary when using as a library since you can just handle with
+	// stdlib directly.
+	var formattedResults string
 	if *legacy {
-		fmt.Println(d.FormatLegacy(formatOpts))
+		formattedResults = d.FormatLegacy(formatOpts)
 	} else {
-		fmt.Println(d.Format(formatOpts))
+		formattedResults = d.Format(formatOpts)
 	}
+	fmt.Println(strings.TrimPrefix(formattedResults, *trimPrefix))
 }
