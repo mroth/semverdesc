@@ -1,3 +1,4 @@
+project_name: git-semver-describe
 before:
   hooks:
     - go mod download
@@ -30,7 +31,6 @@ brews:
     github:
       owner: mroth
       name: homebrew-formulas
-    name: git-semver-describe
     description: "git describe with semantic version 2.0 compatible names"
     homepage: "https://github.com/mroth/semverdesc"
     skip_upload: false
