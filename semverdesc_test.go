@@ -12,9 +12,9 @@ var testCases = []struct {
 	{
 		name: "default",
 		desc: DescribeResults{
-			TagName: "v0.2.1",
-			Distance:   15,
-			HashStr: "d71dd5072d51458a534ca7e0ec7c181d84754774",
+			TagName:  "v0.2.1",
+			Distance: 15,
+			HashStr:  "d71dd5072d51458a534ca7e0ec7c181d84754774",
 		},
 		opts:   DefaultFormatOptions(),
 		want:   "v0.2.1+15.gd71dd50",
@@ -23,9 +23,9 @@ var testCases = []struct {
 	{
 		name: "adjust abbrev",
 		desc: DescribeResults{
-			TagName: "v0.2.1",
-			Distance:   15,
-			HashStr: "d71dd5072d51458a534ca7e0ec7c181d84754774",
+			TagName:  "v0.2.1",
+			Distance: 15,
+			HashStr:  "d71dd5072d51458a534ca7e0ec7c181d84754774",
 		},
 		opts: FormatOptions{
 			Abbrev: 10,
@@ -41,9 +41,9 @@ var testCases = []struct {
 	{
 		name: "adjust abbrev overflow",
 		desc: DescribeResults{
-			TagName: "v0.2.1",
-			Distance:   15,
-			HashStr: "d71dd5",
+			TagName:  "v0.2.1",
+			Distance: 15,
+			HashStr:  "d71dd5",
 		},
 		opts: FormatOptions{
 			Abbrev: 20,
@@ -54,9 +54,9 @@ var testCases = []struct {
 	{
 		name: "exact match",
 		desc: DescribeResults{
-			TagName: "v0.1.2",
-			Distance:   0,
-			HashStr: "71dd5072d51458a534ca7e0ec7c181d84754774d",
+			TagName:  "v0.1.2",
+			Distance: 0,
+			HashStr:  "71dd5072d51458a534ca7e0ec7c181d84754774d",
 		},
 		opts:   DefaultFormatOptions(),
 		want:   "v0.1.2",
@@ -65,9 +65,9 @@ var testCases = []struct {
 	{
 		name: "exact match with long",
 		desc: DescribeResults{
-			TagName: "v0.1.2",
-			Distance:   0,
-			HashStr: "71dd5072d51458a534ca7e0ec7c181d84754774d",
+			TagName:  "v0.1.2",
+			Distance: 0,
+			HashStr:  "71dd5072d51458a534ca7e0ec7c181d84754774d",
 		},
 		opts: FormatOptions{
 			Long: true,
@@ -78,32 +78,32 @@ var testCases = []struct {
 	{
 		name: "prerelease tag",
 		desc: DescribeResults{
-			TagName: "v1.0.0-rc2",
-			Distance:   0,
-			HashStr: "71dd5072d51458a534ca7e0ec7c181d84754774d",
+			TagName:  "v1.0.0-rc2",
+			Distance: 0,
+			HashStr:  "71dd5072d51458a534ca7e0ec7c181d84754774d",
 		},
-		opts: DefaultFormatOptions(),
+		opts:   DefaultFormatOptions(),
 		want:   "v1.0.0-rc2",
 		legacy: "v1.0.0-rc2",
 	},
 	{
 		name: "prerelease tag with distance",
 		desc: DescribeResults{
-			TagName: "v1.0.0-rc2",
-			Distance:   2,
-			HashStr: "71dd5072d51458a534ca7e0ec7c181d84754774d",
+			TagName:  "v1.0.0-rc2",
+			Distance: 2,
+			HashStr:  "71dd5072d51458a534ca7e0ec7c181d84754774d",
 		},
-		opts: DefaultFormatOptions(),
+		opts:   DefaultFormatOptions(),
 		want:   "v1.0.0-rc2+2.g71dd507",
 		legacy: "v1.0.0-rc2-2-g71dd507",
 	},
 	{
 		name: "exact dirty match without dirtymark (defaultopts)",
 		desc: DescribeResults{
-			TagName: "v0.1.2",
-			Distance:   0,
-			HashStr: "71dd5072d51458a534ca7e0ec7c181d84754774d",
-			Dirty:   true,
+			TagName:  "v0.1.2",
+			Distance: 0,
+			HashStr:  "71dd5072d51458a534ca7e0ec7c181d84754774d",
+			Dirty:    true,
 		},
 		opts:   DefaultFormatOptions(),
 		want:   "v0.1.2",
@@ -112,10 +112,10 @@ var testCases = []struct {
 	{
 		name: "exact dirty match with dirtymark",
 		desc: DescribeResults{
-			TagName: "v0.1.2",
-			Distance:   0,
-			HashStr: "71dd5072d51458a534ca7e0ec7c181d84754774d",
-			Dirty:   true,
+			TagName:  "v0.1.2",
+			Distance: 0,
+			HashStr:  "71dd5072d51458a534ca7e0ec7c181d84754774d",
+			Dirty:    true,
 		},
 		opts: FormatOptions{
 			DirtyMark: "-dirty",
@@ -126,10 +126,10 @@ var testCases = []struct {
 	{
 		name: "exact dirty match with dirtymark+long",
 		desc: DescribeResults{
-			TagName: "v0.1.2",
-			Distance:   0,
-			HashStr: "71dd5072d51458a534ca7e0ec7c181d84754774d",
-			Dirty:   true,
+			TagName:  "v0.1.2",
+			Distance: 0,
+			HashStr:  "71dd5072d51458a534ca7e0ec7c181d84754774d",
+			Dirty:    true,
 		},
 		opts: FormatOptions{
 			Long:      true,
