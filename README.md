@@ -140,13 +140,22 @@ var (
 )
 ```
 
-And then override your build command (for example, in your Makefile):
+You will then override this variable value in your build command:
 
 ```shell
-go build -ldflags='-X main.version=$(git-semver-describe --tags)'
+$ VERSION=$(git-semver-describe --tags) go build -ldflags="-X main.version=$VERSION"
 ```
 
-For an example, see this project itself?!
+Or for another example, using a Makefile:
+
+```makefile
+VERSION := $(shell git-semver-describe --tags --trim=v)
+
+build:
+   go build -ldflags="-X main.version=${VERSION}"
+```
+
+For a more involved example, see this project itself.
 
 ## Related Work
 
