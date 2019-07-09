@@ -1,0 +1,38 @@
+before:
+  hooks:
+    - go mod download
+builds:
+- main: ./cmd/git-semver-describe
+  env:
+    - GO111MODULE=on
+    - CGO_ENABLED=0
+  goos:
+    - linux
+    - darwin
+    - windows
+  goarch:
+    - amd64
+  ldflags:
+     - -s -w -X main.buildVersion={{.Version}}
+archives:
+- replacements:
+    darwin: mac
+    amd64: x64
+  format_overrides:
+  - goos: windows
+    format: zip
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Env.VERSION }}-snapshot"
+brews:
+  -
+    github:
+      owner: mroth
+      name: homebrew-formulas
+    description: "git describe with semantic version 2.0 compatible names"
+    homepage: "https://github.com/mroth/semverdesc"
+    skip_upload: false
+# disable changelog generation - managed via https://github.com/mroth/bump
+changelog:
+  skip: true

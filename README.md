@@ -49,7 +49,11 @@ semver-describe.
 
 ## Installation
 
-TODO
+Download from the [Releases] page and put somewhere in your `$PATH`.
+
+macOS Homebrew users can `brew install mroth/formulas/semverdesc`.
+
+[Releases]: https://github.com/mroth/semverdesc/releases
 
 ## API
 
