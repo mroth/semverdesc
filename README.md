@@ -1,6 +1,7 @@
 # git semver-describe :dart:
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/mroth/semverdesc)](https://goreportcard.com/report/github.com/mroth/semverdesc)
+[![GoDoc](https://godoc.org/github.com/mroth/semverdesc?status.svg)](https://godoc.org/github.com/mroth/semverdesc)
 
 Extends `git describe` to return [Semantic Versioning v2.0](https://semver.org)
 compatible names by default:
@@ -60,7 +61,7 @@ macOS Homebrew users can `brew install mroth/formulas/semverdesc`.
 ## API
 
 There is also a Go library encapsulating a lot of this functionality, for more
-information see the GoDocs.
+information see the [GoDocs](https://godoc.org/github.com/mroth/semverdesc).
 
 ## Detailed Discussion
 
@@ -115,10 +116,10 @@ than commit order, you would get:
 |  git semver-describe    |  git describe            |
 |-------------------------|--------------------------|
 |                 v0.8.3  |       v0.8.3-1-g1a2b3c4* |
-|      v0.8.3+1.g1a2b3c4  |       v0.8.3-2-g2b3c4d5* | 
+|      v0.8.3+1.g1a2b3c4  |       v0.8.3-2-g2b3c4d5* |
 |      v0.8.3+2.g2b3c4d5  |                  v0.8.3* |
 |             v0.9.0-rc1  |   v0.9.0-rc1-1-gd3adb33* |
-|  v0.9.0-rc1+1.gd3adb33  |              v0.9.0-rc1* | 
+|  v0.9.0-rc1+1.gd3adb33  |              v0.9.0-rc1* |
 |                 v0.9.0  |                  v0.9.0  |
 
 *: Out-of-order: SemVer ordering differs from commit history.
@@ -168,4 +169,4 @@ For a more involved example, see this project itself.
 - A similar versioning schematic was implemented as a NodeJS library, which
   looks to function by parsing and wrapping the output from shell commands sent
   to git: https://www.npmjs.com/package/git-describe.
-- Some relevant discussion on the semver spec itself: semver/semver#106, semver/semver#106, semver/semver#106 
+- Some relevant discussion on the semver spec itself: semver/semver#106, semver/semver#106, semver/semver#106
