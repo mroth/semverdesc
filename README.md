@@ -1,5 +1,7 @@
 # git semver-describe :dart:
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/mroth/semverdesc)](https://goreportcard.com/report/github.com/mroth/semverdesc)
+
 Extends `git describe` to return [Semantic Versioning v2.0](https://semver.org)
 compatible names by default:
 
@@ -44,8 +46,8 @@ usage: git semver-describe [<options>] [<commit-ish>]
       --legacy                    format results like normal git describe
 ```
 
-The last three flags: `--path`, `--trim` and `--legacy` are those unique to
-semver-describe.
+The last three flags: `--path`, `--trim` and `--legacy` are some handy extra
+features unique to semver-describe.
 
 ## Installation
 
