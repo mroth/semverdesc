@@ -1,6 +1,6 @@
 # git semver-describe :dart:
 
-[![Build Status](https://travis-ci.com/mroth/semverdesc.svg?branch=master)](https://travis-ci.com/mroth/semverdesc)
+![Test Status](https://github.com/mroth/semverdesc/workflows/test/badge.svg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mroth/semverdesc)](https://goreportcard.com/report/github.com/mroth/semverdesc)
 [![GoDoc](https://godoc.org/github.com/mroth/semverdesc?status.svg)](https://godoc.org/github.com/mroth/semverdesc)
 

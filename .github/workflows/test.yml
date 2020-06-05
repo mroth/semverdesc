@@ -1,0 +1,19 @@
+on: [push, pull_request]
+name: test
+jobs:
+  test:
+    strategy:
+      matrix:
+        go-version: [1.12.x, 1.13.x, 1.14.x]
+        # no platform specific code, fine to just test on single OS
+        platform: [ubuntu-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Test
+        run: go test -race -cover ./...
