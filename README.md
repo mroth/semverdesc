@@ -55,7 +55,7 @@ features unique to semver-describe.
 
 Download from the [Releases] page and put somewhere in your `$PATH`.
 
-macOS Homebrew users can `brew install mroth/formulas/git-semver-describe`.
+Homebrew users can `brew install mroth/tap/git-semver-describe`.
 
 [Releases]: https://github.com/mroth/semverdesc/releases
 

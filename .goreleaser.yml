@@ -5,7 +5,6 @@ before:
 builds:
 - main: ./cmd/git-semver-describe
   env:
-    - GO111MODULE=on
     - CGO_ENABLED=0
   goos:
     - linux
@@ -13,6 +12,7 @@ builds:
     - windows
   goarch:
     - amd64
+    - arm64
   ldflags:
      - -s -w -X main.buildVersion={{.Version}}
 archives:
@@ -28,9 +28,9 @@ snapshot:
   name_template: "{{ .Env.VERSION }}-snapshot"
 brews:
   -
-    github:
+    tap:
       owner: mroth
-      name: homebrew-formulas
+      name: homebrew-tap
     description: "git describe with semantic version 2.0 compatible names"
     homepage: "https://github.com/mroth/semverdesc"
     skip_upload: false
